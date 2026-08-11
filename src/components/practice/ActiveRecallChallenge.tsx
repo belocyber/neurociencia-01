@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface ActiveRecallChallengeProps {
   sentenceParts: string[]; // e.g. ["I would like some...", ""]
@@ -20,6 +20,11 @@ export function ActiveRecallChallenge({
   
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [hasError, setHasError] = useState(false);
+
+  useEffect(() => {
+    setSelectedOption(null);
+    setHasError(false);
+  }, [sentenceParts, options, correctOption]);
 
   const handleVerify = () => {
     if (selectedOption === correctOption) {
