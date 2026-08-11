@@ -1,6 +1,6 @@
 "use client";
 
-import { BrainCircuit, Mail, Lock, Github } from "lucide-react";
+import { BrainCircuit, Mail, Lock } from "lucide-react";
 // Assuming there is a generic Google icon, or we can just use text/span since lucide doesn't have a direct google logo usually, we'll use a generic one or text.
 import Link from "next/link";
 
@@ -89,7 +89,7 @@ export default function AuthPage() {
               Continuar com Google
             </button>
             <button className="w-full bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 font-medium py-3 rounded-xl flex items-center justify-center gap-3 transition-colors">
-              <Github className="w-5 h-5" />
+              <span className="flex items-center justify-center w-5 h-5 bg-white text-zinc-900 rounded-full font-bold text-[10px]">GH</span>
               Continuar com Github
             </button>
           </div>
