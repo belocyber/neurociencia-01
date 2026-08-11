@@ -1,36 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Play, Pause, Square, Save } from "lucide-react";
+import { Play, Pause, Square } from "lucide-react";
 
-export function SessionTimer() {
-  const [seconds, setSeconds] = useState(0);
-  const [isActive, setIsActive] = useState(false);
-  const [category, setCategory] = useState("input");
+interface SessionTimerProps {
+  seconds: number;
+  isActive: boolean;
+  toggleTimer: () => void;
+  resetTimer: () => void;
+}
 
-  useEffect(() => {
-    let interval: NodeJS.Timeout | null = null;
-    if (isActive) {
-      interval = setInterval(() => {
-        setSeconds(seconds => seconds + 1);
-      }, 1000);
-    } else if (!isActive && seconds !== 0) {
-      if (interval) clearInterval(interval);
-    }
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, [isActive, seconds]);
-
-  const toggleTimer = () => {
-    setIsActive(!isActive);
-  };
-
-  const resetTimer = () => {
-    setIsActive(false);
-    setSeconds(0);
-  };
-
+export function SessionTimer({ seconds, isActive, toggleTimer, resetTimer }: SessionTimerProps) {
   const formatTime = (totalSeconds: number) => {
     const hrs = Math.floor(totalSeconds / 3600);
     const mins = Math.floor((totalSeconds % 3600) / 60);
