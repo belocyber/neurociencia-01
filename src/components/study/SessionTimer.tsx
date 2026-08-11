@@ -1,65 +1,70 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Play, Pause, Square } from "lucide-react";
-import clsx from "clsx";
+import { Play, Pause, Square, Save } from "lucide-react";
 
-export function SessionTimer({ onStop }: { onStop: (minutes: number) => void }) {
+export function SessionTimer() {
   const [seconds, setSeconds] = useState(0);
   const [isActive, setIsActive] = useState(false);
+  const [category, setCategory] = useState("input");
 
   useEffect(() => {
-    let interval: NodeJS.Timeout;
+    let interval: NodeJS.Timeout | null = null;
     if (isActive) {
       interval = setInterval(() => {
-        setSeconds((s) => s + 1);
+        setSeconds(seconds => seconds + 1);
       }, 1000);
+    } else if (!isActive && seconds !== 0) {
+      if (interval) clearInterval(interval);
     }
-    return () => clearInterval(interval);
-  }, [isActive]);
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isActive, seconds]);
 
-  const toggle = () => setIsActive(!isActive);
+  const toggleTimer = () => {
+    setIsActive(!isActive);
+  };
 
-  const stop = () => {
+  const resetTimer = () => {
     setIsActive(false);
-    onStop(Math.round(seconds / 60));
     setSeconds(0);
   };
 
   const formatTime = (totalSeconds: number) => {
-    const h = Math.floor(totalSeconds / 3600);
-    const m = Math.floor((totalSeconds % 3600) / 60);
-    const s = totalSeconds % 60;
-    if (h > 0) return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
-    return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
+    const hrs = Math.floor(totalSeconds / 3600);
+    const mins = Math.floor((totalSeconds % 3600) / 60);
+    const secs = totalSeconds % 60;
+    
+    if (hrs > 0) {
+      return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
   return (
-    <div className="flex flex-col items-center bg-zinc-900 border border-zinc-800 rounded-3xl p-10 shadow-xl w-full max-w-md mx-auto">
-      <div className="text-6xl font-mono font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400 tabular-nums mb-8 drop-shadow-[0_0_15px_rgba(99,102,241,0.3)]">
+    <div className="flex flex-col items-center">
+      <div className={`text-7xl sm:text-9xl font-mono tracking-widest font-bold mb-12 transition-colors duration-300
+        ${isActive ? 'text-brand-cyan drop-shadow-[0_0_20px_rgba(0,242,254,0.6)]' : 'text-zinc-100'}`}>
         {formatTime(seconds)}
       </div>
 
-      <div className="flex gap-4">
-        <button
-          onClick={toggle}
-          className={clsx(
-            "flex items-center gap-2 px-6 py-3 rounded-full font-semibold transition-all",
-            isActive
-              ? "bg-amber-500/10 text-amber-500 hover:bg-amber-500/20"
-              : "bg-indigo-500 text-white hover:bg-indigo-600 shadow-[0_0_15px_rgba(99,102,241,0.4)]"
-          )}
+      <div className="flex items-center gap-6 mb-12">
+        <button 
+          onClick={toggleTimer}
+          className={`w-16 h-16 rounded-full flex items-center justify-center transition-all ${
+            isActive ? 'bg-zinc-800 text-brand-orange hover:bg-zinc-700 hover:glow-orange' : 'bg-brand-cyan text-zinc-950 hover:bg-brand-cyan/80 glow-cyan'
+          }`}
         >
-          {isActive ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5 fill-current" />}
-          {isActive ? "Pausar" : "Iniciar Foco"}
+          {isActive ? <Pause className="w-8 h-8" /> : <Play className="w-8 h-8 ml-1" />}
         </button>
-        <button
-          onClick={stop}
+        
+        <button 
+          onClick={resetTimer}
           disabled={seconds === 0}
-          className="flex items-center gap-2 px-6 py-3 rounded-full font-semibold bg-zinc-800 text-zinc-300 hover:bg-zinc-700 hover:text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-16 h-16 rounded-full flex items-center justify-center bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <Square className="w-5 h-5 fill-current" />
-          Encerrar
+          <Square className="w-6 h-6" />
         </button>
       </div>
     </div>
